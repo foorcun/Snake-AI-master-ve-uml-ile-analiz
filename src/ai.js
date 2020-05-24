@@ -1,31 +1,33 @@
 class Ai {
 
-  constructor ({neat, fields, onEndGeneration}) {
-    this.neat = neat
-    this.fields = []
-    this.fieldsFinished = 0
-    this.onEndGeneration = onEndGeneration
+  constructor ({neat, populasyon, onEndGeneration}) {
+    this.neat = neat // neat reinforcement algorithmalar atadık
+    this.populasyon = [] // populasyon // galba burda değer olarak aldığı değer (bu durumda 55) arrayin size olarak atanıyor, değer olark değil
+    this.populasyon_member_dead = 0 // ölenlerin saysı
+    this.onEndGeneration = onEndGeneration // bu bir chart-data proceduru
 
-    for (let i = 0; i < fields; i++) { // burdaki fieldlar fields anlamında
-      this.fields.push(new Field({
+    for (let i = 0; i < populasyon; i++) { // burda her bir "FIELD + SNAKE" POPULASYONU yapmış olduk. playerımız olan....
+      //.. snake için populasyon(aslında Field).snake şeklinde bir ulaşma sağlıyorz. ai ile snake arasında direk bir bağlantı yok
+      // playerımıza filed üzerinden bağlanıyor
+      this.populasyon.push(new Field({
         onGameOver: () => this.endGeneration() // enGameOver a procedure atıyorz
       }))
     }
   }
 
   launchGeneration () { // burdaki fieldslar populasyon anlamında
-    this.fieldsFinished = 0 // bu populasyon mu field le mi alakalı, fields ise burdan al bunu
+    this.populasyon_member_dead = 0 // bu populasyon mu field le mi alakalı, fields ise burdan al bunu
 
-    for (let i = 0; i < this.fields.length; i++) {
-      this.fields[i].snake.brain = this.neat.population[i]
-      this.fields[i].snake.brain.score = 0
-      this.fields[i].start()
+    for (let i = 0; i < this.populasyon.length; i++) {
+      this.populasyon[i].snake.brain = this.neat.population[i]
+      this.populasyon[i].snake.brain.score = 0
+      this.populasyon[i].start()
     }
   }
 
   endGeneration () {
-    if (this.fieldsFinished + 1 < this.fields.length) { // burdaki fieldslar populasyon anlamında, ölenlerin sayısı toplam sayısa eşitse hepsi ölmuştur kontrolu
-      this.fieldsFinished++
+    if (this.populasyon_member_dead + 1 < this.populasyon.length) { // burdaki fieldslar populasyon anlamında, ölenlerin sayısı toplam sayısa eşitse hepsi ölmuştur kontrolu
+      this.populasyon_member_dead++
       return  // her bir yılanın ölüşü ayrı ayrı endGeneration methodunu çağırıyor, bu return ile tamamı ölmemişse endGeneration procedure ara veriyrz
     }
 
