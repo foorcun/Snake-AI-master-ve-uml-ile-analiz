@@ -2,6 +2,7 @@ class Field extends game_data {
 
   constructor ({onGameOver}) {
     super();
+    this.game_amout = this.game_amout
     this.size = this.fieldSize
     this.unit = this.fieldUnit
     this.unitsPerRow = this.size / this.unit
@@ -86,5 +87,35 @@ class Field extends game_data {
     this.snake.reset()
     this.food = new Food(this)
     this.status = 'RUNNING'
+  }
+
+
+
+
+  // adapter için olması gereken methodlar
+
+   launchGameFields(populasyon, endGeneration) { // field Amounta girilen sayı kadar game space yaratıcak
+    //burda sadece game_space başlatıyor
+    for (let i = 0; i < this.populasyon; i++) { // burda her bir "FIELD + SNAKE" POPULASYONU yapmış olduk. playerımız olan....
+      //.. snake için populasyon(aslında Field).snake şeklinde bir ulaşma sağlıyorz. ai ile snake arasında direk bir bağlantı yok
+      // playerımıza filed üzerinden bağlanıyor
+      return populasyon.push(new Field({
+        onGameOver: () => endGeneration() // enGameOver a procedure atıyorz
+      }))
+    }
+  } 
+
+
+
+
+
+  launchGeneration(populasyon,neat) { // input populasyon arrayi ve neat // burda playıra beyin vererek player populasyonu başlatıyor
+    this.populasyon_member_dead = 0 // bu populasyon mu field le mi alakalı, fields ise burdan al bunu
+
+    for (let i = 0; i < populasyon.length; i++) {
+      populasyon[i].snake.brain = neat.population[i]
+      populasyon[i].snake.brain.score = 0
+      populasyon[i].start()
+    }
   }
 }
