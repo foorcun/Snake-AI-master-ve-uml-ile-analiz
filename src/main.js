@@ -53,7 +53,7 @@ let highestScore = 0
 
 const ai = new Ai({
   neat,
-  fields: ai_data.populasyon, //hem populasyon hem game field
+  populasyon: ai_data.populasyon, //hem populasyon hem game field
  
   onEndGeneration: ({generation, max, avg, min}) => {
     chartData.labels.push(generation.toString())
