@@ -1,0 +1,103 @@
+@startuml
+
+title Classes - Class Diagram of Snake-AI-master
+
+
+class inputlar{
+//game setup
+const GAMES 
+const FIELD_SIZE
+const FIELD_UNIT
+const FRAME_RATE
+
+//score
+let highestScore = 0 
+//score mechanism
+const POINTS_MOVED_TOWARDS_FOOD
+const POINTS_MOVED_AGAINST_FOOD
+const POINTS_ATE_FOOD
+const MAX_TURNS
+const LOWEST_SCORE_ALLOWED
+
+//neural net
+const MUTATION_RATE
+const ELITISM
+
+// neataptic framework call
+const Neat = neataptic.Neat
+const Config = neataptic.Config
+Config.warnings = false
+
+
+
+
+}
+
+
+class neat {
+  input = 6
+  output = 2
+  bişey = null
+  []popsize, elitism, mutationRate
+  
+ 
+}
+
+class chart {
+title
+type
+height
+data
+colors
+
+
+
+}
+
+class ai {
+  neat
+  fields
+  fieldSize
+  fieldUnit
+  frameRate
+  maxTurns 
+  lowestScoreAllowed
+  score
+  onEndGeneration
+  
+  constructor() //creates new Field objects
+  launchGeneration ()
+  endGeneration ()
+}
+
+
+
+
+class Field {
+  size
+  unit
+  frameRate
+  maxTurns
+  lowestScoreAllowed
+  score
+  onGameOver
+  
+  constructor() //creates new Snake objects
+  updateGameStatus ()
+  getfreePositions ()
+  start () //creates new food objects
+}
+
+class Snake{
+score
+reset ()
+move (field)
+draw(p, field)
+}
+
+class Food{
+field //field classı ve her türlü funcsiyonu
+draw(p, field)
+}
+
+@enduml

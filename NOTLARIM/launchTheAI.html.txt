@@ -1,0 +1,11 @@
+bu kýsýmda
+
+bir div chart için atýlmýþ
+
+sonra libler import edilmiþ
+
+sonra da bizim js ler
+
+import sýrasý önemlidir
+
+pek dikkate deðer bir þey yok gibi

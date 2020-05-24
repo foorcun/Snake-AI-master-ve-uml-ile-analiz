@@ -1,0 +1,60 @@
+@startuml
+
+title Main
+[*] --> Ai
+state Ai 
+state neat
+state datachart
+state chart
+
+state "Ai" as Ai {
+  state ai.launchGeneration{
+  state field{
+  state snake
+  state food
+  state onGameover
+  state p5.setup{
+  state canvas
+ } 
+  state p5.draw{
+  state field.updateGameStatus
+  state field.ongameover
+  state snake.move
+  state snake.draw
+  state food.draw
+  
+  }
+  
+  }
+  }
+  
+  }
+  state field
+  state start{
+  state food
+  state snakeReset
+  
+  }
+  
+  field --> start
+  state gameover
+  start --> gameover
+  state field.ongameover
+  gameover --> field.ongameover
+  
+  field.ongameover --> onGameover
+}
+
+
+state ai.endgeneration
+onGameover --> ai.endgeneration
+
+state nnislemleri
+ai.endgeneration --> nnislemleri
+
+state newGeneration
+nnislemleri --> newGeneration
+
+newGeneration --> ai.launchGeneration
+
+@enduml

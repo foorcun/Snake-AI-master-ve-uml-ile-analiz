@@ -1,0 +1,73 @@
+@startuml
+
+
+
+class Snake {
+score
+scoreModifiers
+
+
+reset ()
+move (field)
+draw(p, field)
+
+}
+
+
+
+class Food {
+
+freePositions
+
+position
+
+
+
+constructor (field)
+draw(p, field)
+}
+
+
+class Field{
+size
+unit
+frameRate
+maxTurns
+lowestScoreAllowed
+score
+onGameOver
+
+field
+
+updateGameStatus ()
+getfreePositions () 
+start ()
+}
+
+
+
+
+
+class Ai-player- {
+  neat
+  fields
+  fieldSize
+  fieldUnit
+  frameRate
+  maxTurns
+  lowestScoreAllowed
+  score
+  onEndGeneration
+  launchGeneration()
+  endGeneration ()
+}
+
+
+
+
+
+
+
+@enduml
+
+
