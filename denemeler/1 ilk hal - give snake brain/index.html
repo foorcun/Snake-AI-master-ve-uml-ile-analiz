@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+  <title></title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+
+  <style>
+    html,
+    body {
+
+      height: 100%;
+
+      margin: 0;
+
+    }
+
+
+
+    body {
+
+      background: black;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+    }
+
+    canvas {
+
+      border: 1px solid white;
+
+    }
+  </style>
+
+
+</head>
+
+<body>
+  <script src="lib/neataptic.min.js"></script>
+
+  <script type="text/javascript" src="game_data.js"></script>
+  <script type="text/javascript" src="ai_data.js"></script>
+  <script type="text/javascript" src="snake.js"></script>
+  <script type="text/javascript" src="ai.js"></script>
+
+  <main>
+    <div class="container bg-light">
+      <p>generation<br><span id="generation">0</span></p>
+
+    </div>
+
+    <canvas width="400" height="400" id="game"></canvas>
+
+    <script>
+
+      var canvas = document.getElementById('game');
+
+      var context = canvas.getContext('2d');
+
+      /* ai başlangıc */
+      var ai_data = new Ai_data()
+      const neat = ai_data.neat
+      const populasyon = ai_data.populasyon
+
+      const ai = new Ai({
+        neat,
+        populasyon: populasyon, //hem populasyon hem game field
+
+
+      })
+
+      ai.launchGeneration()
+
+      popi = ai.populasyon
+      //console.log(popi[0].brain)
+      ind = 0
+      document.title = "üye :" + ind
+
+      /* ai son */
+
+
+      var game_data = new Game_data()
+
+
+      var grid = game_data.grid;
+
+      var count = 0;
+
+
+      // snake alındı burdan
+      snake = popi[0]
+
+      var apple = {
+
+        x: 320,
+
+        y: 320
+
+      };
+
+
+
+      // get random whole numbers in a specific range
+
+      // @see https://stackoverflow.com/a/1527820/2124254
+
+      function getRandomInt(min, max) {
+
+        return Math.floor(Math.random() * (max - min)) + min;
+
+      }
+
+
+
+      // game loop
+      /* var framesayisi = 0
+      
+      
+      if(framesayisi == 50){
+          alert("şimdi")
+          up_right()
+      
+        }else
+        {
+          framesayisi++
+        } */
+
+      function loop() {
+
+        requestAnimationFrame(loop);
+
+
+
+        // slow game loop to 15 fps instead of 60 (60/15 = 4)
+
+        if (++count < 4) {
+
+          //// karar uygulaması burda olacak
+          //up_right()
+          //up_right2()
+          //alert(snake.direction)
+
+
+
+          if (snake.cells[0] !== undefined) {
+            document.title = "üye :" + ind + " score " + snake.brain.score
+
+
+
+
+
+            //console.log("snake brain ", popi[ind].brain)
+            //console.log("asdf" +snake.cells[0])
+            try {
+              //console.log(snake.cells[0])
+
+              thinko = think(snake, apple)
+              //console.log(thinko)
+              //console.log(snake.cells)
+
+              //alert("hahahah")
+              console.log(thinko)
+
+
+
+            } catch (error) {
+              alert("hata " + snake.cells)
+              console.log(snake.cells)
+            }
+          }
+          //alert(thinko)
+
+          try {
+            dön(thinko, popi[ind])
+
+          } catch (error) {
+
+
+          }
+
+
+
+          return;
+
+        }
+
+
+
+        count = 0;
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+
+
+        // move snake by it's velocity
+
+        snake.x += snake.dx;
+
+        snake.y += snake.dy;
+
+
+
+        // wrap snake position horizontally on edge of screen
+
+        if (snake.x < 0) {
+
+          snake.x = canvas.width - grid;
+
+        }
+
+        else if (snake.x >= canvas.width) {
+
+          snake.x = 0;
+
+        }
+
+
+
+        // wrap snake position vertically on edge of screen
+
+        if (snake.y < 0) {
+
+          snake.y = canvas.height - grid;
+
+        }
+
+        else if (snake.y >= canvas.height) {
+
+          snake.y = 0;
+
+        }
+
+
+
+        // keep track of where snake has been. front of the array is always the head
+
+        snake.cells.unshift({ x: snake.x, y: snake.y });
+
+        //console.log("ön " + snake.cells[0].x)
+
+
+        // remove cells as we move away from them
+
+        if (snake.cells.length > snake.maxCells) {
+
+          snake.cells.pop();
+
+        }
+
+
+
+        // draw apple
+
+        context.fillStyle = 'red';
+
+        context.fillRect(apple.x, apple.y, grid - 1, grid - 1);
+
+
+
+        // draw snake one cell at a time
+
+        context.fillStyle = 'green';
+
+        snake.cells.forEach(function (cell, index) {
+
+
+
+          // drawing 1 px smaller than the grid creates a grid effect in the snake body so you can see how long it is
+
+          context.fillRect(cell.x, cell.y, grid - 1, grid - 1);
+
+
+
+          // snake ate apple
+
+          if (cell.x === apple.x && cell.y === apple.y) {
+
+            snake.maxCells++;
+
+
+
+            // canvas is 400x400 which is 25x25 grids 
+
+            apple.x = getRandomInt(0, 25) * grid;
+
+            apple.y = getRandomInt(0, 25) * grid;
+
+          }
+
+
+
+          // check collision with all cells after this one (modified bubble sort)
+
+          for (var i = index + 1; i < snake.cells.length; i++) {
+
+
+
+            // snake occupies same space as a body part. reset game
+
+            if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
+
+              /*  snake.x = 160;
+   
+               snake.y = 160;
+   
+               snake.cells = [];
+   
+               snake.maxCells = 4;
+   
+               snake.dx = grid;
+   
+               snake.dy = 0;
+   
+   
+   
+               apple.x = getRandomInt(0, 25) * grid;
+   
+               apple.y = getRandomInt(0, 25) * grid; */
+              //snake = ölüm(popi,ind,snake, apple)
+               ölüm(snake, apple)
+
+
+            }
+
+          }
+
+        });
+
+
+
+
+
+
+        if (game_data.game_time < game_data.süre) {
+          game_data.game_time++
+
+
+
+        } else if (snake.turns < game_data.MAX_TURNS) { //max trun ölüm
+          //ölüm(popi,ind,snake, apple)
+          //snake = ölüm(popi,ind,snake, apple)
+            ölüm(snake, apple)
+
+
+
+
+        }
+        else { // süre ölüm
+
+
+          //ölüm(popi,ind,snake, apple)
+          //snake = ölüm(popi,ind,snake, apple)
+
+
+          ölüm(snake, apple)
+
+
+
+        }
+
+
+      }
+
+
+
+
+
+
+
+
+
+      // listen to keyboard events to move the snake
+
+      document.addEventListener('keydown', function (e) {
+
+        // prevent snake from backtracking on itself by checking that it's 
+
+        // not already moving on the same axis (pressing left while moving
+
+        // left won't do anything, and pressing right while moving left
+
+        // shouldn't let you collide with your own body)
+
+
+
+        // left arrow key
+
+        if (e.which === 37 && snake.dx === 0) {
+
+          /*  snake.dx = -grid;
+       
+           snake.dy = 0; */
+          leftArrow()
+
+        }
+
+        // up arrow key
+
+        else if (e.which === 38 && snake.dy === 0) {
+
+          /*  snake.dy = -grid;
+       
+           snake.dx = 0; */
+          upArrow()
+
+        }
+
+        // right arrow key
+
+        else if (e.which === 39 && snake.dx === 0) {
+
+          /* snake.dx = grid;
+      
+          snake.dy = 0; */
+          rightArrow()
+
+        }
+
+        // down arrow key
+
+        else if (e.which === 40 && snake.dy === 0) {
+
+          /*   snake.dy = grid;
+        
+            snake.dx = 0; */
+
+          downArrow()
+
+        }
+
+      });
+
+
+
+      // start the game
+
+      requestAnimationFrame(loop);
+
+    </script>
+
+
+
+
+  </main>
+
+
+  <!-- jQuery first, then Bootstrap JS -->
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
