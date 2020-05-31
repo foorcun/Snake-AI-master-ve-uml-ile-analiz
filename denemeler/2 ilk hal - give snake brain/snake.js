@@ -247,6 +247,7 @@ function think(snake, apple) {
 
 
 function dön(think, snake) {
+
     isFoodLeft = think[1]
     isFoodRight = think[2]
     isFoodForward = think[0]
@@ -345,11 +346,15 @@ function ölüm(snake, apple){
 
    // return ind
 
-      if (ind+1 == popi.length) {
+      if (ind+1 == ai.populasyon.length) {
+          ai.populasyon_member_dead =0
+
              
         return 0
     }  
 
+    ai.populasyon_member_dead +=1
+    snake = ai.launchGeneration()
 
 
     return 1
@@ -388,6 +393,27 @@ function createNewGeneration(ai){
 
         $( "#generation" ).html(ai.neat.generation)
 
+        
+           
+            asdf= ai.neat.generation,
+            max= ai.neat.getFittest().score
+           
+        
+           
+           /*  ai.onEndGeneration({ // bu data table ile alakalı
+                generation: ai.neat.generation,
+                max: ai.neat.getFittest().score,
+                avg: Math.round(ai.neat.getAverage()),
+                min: ai.neat.population[ai.neat.popsize - 1].score // dizinin son elemanının skorunu alıyr, bellik yüksekten düşüğe sıralanmış
+              })
+     */
+            
+         
+            
+            alert("hata")
+        
+
+    
 
 
 
@@ -423,4 +449,29 @@ function bilgiYaz(ai,ind)
 
     $( ".generation" ).append( "<p>Generation : " + ai.neat.generation+ ", üye: "+ ind+"</p>" );
 
+}
+
+
+
+
+function yaklastimi(snake,apple){
+
+    if(snake.cells.length >1){
+
+        yaklas0 =  Math.sqrt(Math.pow((snake.cells[1].x -apple.x),2)  + Math.pow((snake.cells[1].y -apple.y),2))
+        yaklas1 =  Math.sqrt(Math.pow((snake.cells[0].x -apple.x),2)  + Math.pow((snake.cells[0].y -apple.y),2))
+          
+       // alert(yaklas0 -yaklas1)
+
+
+        if(yaklas0 > yaklas1){
+            return 1 //yaklastı
+        }else{
+            return 0
+        }
+      
+
+
+    }
+ 
 }

@@ -32,7 +32,7 @@ class Ai {
      //console.log(this.populasyon[i].snake)
      //console.log(this.populasyon[i].brain)
 
-        this.populasyon[i].brain = this.neat.population[i]
+        this.populasyon[i].brain = this.neat.population[i] // yeni populasyona beyin verme işlemi // neat.population diye aldığı sadece beyin.
         this.populasyon[i].brain.score = 0
         //this.populasyon[i].gameField.start()
       }

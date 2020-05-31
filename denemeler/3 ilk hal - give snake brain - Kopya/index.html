@@ -45,15 +45,87 @@
 
 <body>
   <script src="lib/neataptic.min.js"></script>
+  <script src="lib/frappe-charts.min.iife.js"></script>
+
 
   <script type="text/javascript" src="game_data.js"></script>
   <script type="text/javascript" src="ai_data.js"></script>
   <script type="text/javascript" src="snake.js"></script>
   <script type="text/javascript" src="ai.js"></script>
 
+
+
+
+
+  <div class="container bg-light" id="chart">
+
+  </div>
+  
+  <script>
+    ////chart başlangıc
+  
+  const chartData = {
+    labels: [],
+    datasets: [
+      {
+        name: 'Max',
+        values: []
+      },
+      {
+        name: 'Average',
+        values: []
+      },
+      {
+        name: 'Min',
+        values: []
+      }
+    ]
+  }
+  
+  const chart = new Chart('#chart', {
+    title: 'generation score history',
+    type: 'line',
+    height: 200,
+    data: chartData,
+    colors: ['#F6FC53', 'light-blue', '#E41414'],
+  
+  })
+  
+  ////chart bitis
+  </script>
+  
+
+
+
+
+
   <main>
-    <div class="container bg-light">
+
+
+
+
+
+
+
+
+
+    <div class="bg-light">
       <p>generation<br><span id="generation">0</span></p>
+
+    </div>
+
+    <div class="container bg-light">
+      <p>Oyuncu bilgileri<br>
+        generation: <span id="gene">#</span><br>
+        id: <span id="ide">#</span><br>
+        weight1 :<span id="brain">#</span><br>
+      
+      
+      
+      
+      
+      
+      </p>
 
     </div>
 
@@ -65,21 +137,51 @@
 
       var context = canvas.getContext('2d');
 
+
+
+
+
+
+
       /* ai başlangıc */
       var ai_data = new Ai_data()
       const neat = ai_data.neat
       const populasyon = ai_data.populasyon
 
+
+let highestScore = 0
+
       const ai = new Ai({
         neat,
         populasyon: populasyon, //hem populasyon hem game field
+        onEndGeneration: ({generation, max, avg, min}) => {  // onEndGeneration aslında bir function, değişken falan değil
+    chartData.labels.push(generation.toString())
+    chartData.datasets[0].values.push(max)
+    chartData.datasets[1].values.push(avg)
+    chartData.datasets[2].values.push(min)
+
+    chart.update(chartData)
+    if (max > highestScore) {
+      highestScore = max
+    }
+
+    document.getElementById('generation').innerHTML = generation
+    //document.getElementById('highest-score').innerHTML = highestScore
+  }
+
+
 
 
       })
+      //console.log(ai.populasyon)
+      //ai.launchGeneration()
 
-      ai.launchGeneration()
+     // alert(ai.populasyon)
 
-      popi = ai.populasyon
+
+
+      //popi = ai.populasyon
+
       /* 
             console.log(popi[0]) // popi[0] => bir snake objesi
       
@@ -88,23 +190,23 @@
       ind = 0
       document.title = "üye :" + ind
 
-      popi[0].generation = 0
-      popi[0].ide = 0
-
-      popi[1].generation = 1
-      popi[1].ide = 1
-      //alert(popi[ind].ide)
-
-      popi[2].generation = 2
-      popi[2].ide = 2
-      //alert(ind)
-
-      popi[3].generation = 3
-      popi[3].ide = 3
-
-
-      popi[4].generation = 4
-      popi[4].ide = 4
+      /*    popi[0].generation = 0
+         popi[0].ide = 0
+   
+         popi[1].generation = 1
+         popi[1].ide = 1
+         //alert(popi[ind].ide)
+   
+         popi[2].generation = 2
+         popi[2].ide = 2
+         //alert(ind)
+   
+         popi[3].generation = 3
+         popi[3].ide = 3
+   
+   
+         popi[4].generation = 4
+         popi[4].ide = 4 */
 
 
 
@@ -134,8 +236,24 @@
       var count = 0;
 
 
+  /*     for (let index = 0; index < ai.populasyon.length; index++) {
+        
+//console.log(index)
+         // snake alındı burdan
+     // snake = ai.populasyon[index]
+      snake = ai.populasyon[index]
+      //alert(snake.ide)
+      //console.log(ai.populasyon.length)
+      //console.log(ai.populasyon[0] == ai.populasyon[2])
+      //console.log(snake.ide)
+      } */
       // snake alındı burdan
-      snake = popi[ind]
+     // snake = ai.populasyon[ind]
+      snake = ai.launchGeneration()
+      //alert(snake.ide)
+      //console.log(ai.populasyon.length)
+      //console.log(ai.populasyon[0] == ai.populasyon[2])
+      //console.log(snake)
 
       var apple = {
 
@@ -181,7 +299,7 @@
 
         // slow game loop to 15 fps instead of 60 (60/15 = 4)
 
-        if (++count < 4) {
+        if (++count < 2) {
 
           //// karar uygulaması burda olacak
           //up_right()
@@ -190,7 +308,12 @@
 
 
           if (snake.cells[0] !== undefined) {
+            //document.title = "üye :" + ind + " score " + snake.brain.score
             document.title = "üye :" + ind + " score " + snake.brain.score
+        $( "#gene" ).html(snake.generation)
+        $( "#ide" ).html(snake.ide)
+        $( "#brain" ).html(snake.brain.connections[1].weight)
+
 
             // alert("ha" + ind)
 
@@ -199,32 +322,56 @@
 
             //console.log("snake brain ", popi[ind].brain)
             //console.log("asdf" +snake.cells[0])
-            try {
-              //console.log(snake.cells[0])
+            //try {
+            //console.log(snake.cells[0])
 
-              thinko = think(snake, apple)
-              //console.log(thinko)
-              //console.log(snake.cells)
+            var thinko = think(snake, apple)
+            //console.log(thinko)
+            //console.log(snake.cells)
 
-              //alert("hahahah")
-              //console.log(thinko)
+            //alert("hahahah")
+            //console.log(thinko)
+            dön(thinko, snake)
 
 
+            yaklastm = yaklastimi(snake, apple)
+            if (yaklastm == 1) {
+              snake.brain.score += 1
+             // alert("yaklastı")
+            } else {
+              snake.brain.score += -1.5
+             // alert("uzak")
 
-            } catch (error) {
-              alert("hata " + snake.cells)
-              console.log(snake.cells)
             }
+
+           // alert(snake.brain.score)
+
+            /*      try {
+                   alert(1234)
+ 
+ 
+                 }
+ 
+ 
+                 catch (error) {
+                   alert("dönmedi")
+ 
+ 
+                 }
+ 
+ 
+ 
+               } catch (error) {
+                 alert("hata " + snake.cells)
+                 console.log(snake.cells)
+               } */
+          }else{
+           // alert("bak bi satır 288")
           }
           //alert(thinko)
 
-          try {
-            dön(thinko, snake)
-
-          } catch (error) {
 
 
-          }
 
 
 
@@ -368,7 +515,7 @@
    
                apple.y = getRandomInt(0, 25) * grid; */
               //snake = ölüm(popi,ind,snake, apple)
-              kalan = ölüm(snake, apple)
+              kalan = ölüm(snake, apple, ai)
 
 
               if (kalan == 0) {
@@ -377,13 +524,18 @@
 
                 popi = ai.populasyon
 
-                snake = popi[ind]
+                //snake = ai.populasyon[ind]
+    snake = ai.launchGeneration()
+
                 //alert(snake)
               } else {
                 // alert(ind)
                 ind += 1
                 //alert(ind)
-                snake = popi[ind]
+               // snake = ai.populasyon[ind]
+    snake = ai.launchGeneration()
+
+                console.log(snake.brain.connections)
 
                 //console.log(kalan)
               }
@@ -410,22 +562,28 @@
         } else if (snake.turns < game_data.MAX_TURNS) { //max trun ölüm
           //ölüm(popi,ind,snake, apple)
           //snake = ölüm(popi,ind,snake, apple)
-          kalan = ölüm(snake, apple)
+          kalan = ölüm(snake, apple, ai)
 
 
           if (kalan == 0) {
             newAi = createNewGeneration(ai)
+            
             ind = 0
 
             popi = ai.populasyon
 
-            snake = popi[ind]
+            snake = ai.populasyon[ind]
+    snake = ai.launchGeneration()
+
             //alert(snake)
           } else {
             // alert(ind)
             ind += 1
             //alert(ind)
-            snake = popi[ind]
+            snake = ai.populasyon[ind]
+    snake = ai.launchGeneration()
+
+           // console.log(snake.brain.connections)
 
             //console.log(kalan)
           }
@@ -441,7 +599,7 @@
           //snake = ölüm(popi,ind,snake, apple)
 
 
-          kalan = ölüm(snake, apple)
+          kalan = ölüm(snake, apple, ai)
 
 
           if (kalan == 0) {
@@ -450,13 +608,18 @@
 
             popi = ai.populasyon
 
-            snake = popi[ind]
-           // alert(snake)
+            snake = ai.populasyon[ind]
+    snake = ai.launchGeneration()
+
+            // alert(snake)
           } else {
             // alert(ind)
             ind += 1
             //alert(ind)
-            snake = popi[ind]
+            snake = ai.populasyon[ind]
+    snake = ai.launchGeneration()
+
+            console.log(snake.brain.connections)
 
             //console.log(kalan)
           }
