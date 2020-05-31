@@ -5,7 +5,7 @@ class Ai_data  {
     populasyon = 15
 
     // neural network settings
-    MUTATION_RATE = 0.6
+    MUTATION_RATE = 0.3
     ELITISM = Math.round(0.1 * this.populasyon)
 
 

@@ -2,10 +2,10 @@ class Ai_data  {
 
     //grid=16
 
-    populasyon = 15
+    populasyon = 20
 
     // neural network settings
-    MUTATION_RATE = 0.6
+    MUTATION_RATE = 0.3
     ELITISM = Math.round(0.1 * this.populasyon)
 
 
